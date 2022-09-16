@@ -1,0 +1,83 @@
+module.exports = {
+  root: true,
+  env: {
+    browser: true,
+    node: true,
+    jest: true,
+  },
+  settings: {
+    react: {
+      version: "detect",
+    },
+    "import/resolver": {
+      node: {
+        extensions: [".js", "jsx", ".ts", ".tsx"],
+      },
+    },
+  },
+  extends: [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "airbnb",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:import/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:prettier/recommended",
+  ],
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+    sourceType: "module",
+    ecmaVersion: 13,
+  },
+  plugins: ["@typescript-eslint", "react", "import", "prettier"],
+  rules: {
+    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "no-use-before-define": "off",
+    "no-shadow": "off",
+    "no-param-reassign": [
+      "error",
+      { props: true, ignorePropertyModificationsFor: ["draft"] },
+    ],
+    camelcase: "off",
+    "import/no-unresolved": "off",
+    "import/prefer-default-export": "off",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        js: "never",
+        jsx: "never",
+        ts: "never",
+        tsx: "never",
+      },
+    ],
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/no-empty-interface": "off",
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/no-non-null-assertion": "off", // 그래도 수정해야한다.
+    "@typescript-eslint/no-explicit-any": "off", // 그래도 수정해야한다.
+    "react-hooks/exhaustive-deps": "off", // 그래도 수정해야한다.
+    "react/function-component-definition": "off",
+    "react/jsx-no-useless-fragment": "warn",
+    "react/jsx-props-no-spreading": "off",
+    "react/jsx-filename-extension": [
+      "error",
+      { extensions: [".js", ".jsx", ".ts", ".tsx"] },
+    ],
+    "react/no-array-index-key": "off",
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        components: ["Link"],
+        specialLink: ["hrefLeft", "hrefRight"],
+        aspects: ["invalidHref", "preferButton"],
+      },
+    ],
+    "@next/next/no-img-element": "off",
+  },
+};
