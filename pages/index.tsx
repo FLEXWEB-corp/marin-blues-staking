@@ -2,7 +2,6 @@ import type { NextPage } from "next";
 import { useState } from "react";
 import Group from "../components/Group";
 import Info from "../components/Info";
-import Overlay from "../components/Overlay";
 import Single from "../components/Single";
 import { MainContainer, TabModal } from "./style";
 
