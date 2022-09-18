@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "../Button";
 import { GroupContainer } from "./style";
 
 const Group = () => {
@@ -31,7 +32,9 @@ const Group = () => {
               </div>
             </div>
           ))}
-          <div className="claim-btn">Claim</div>
+          <Button width="125px" height="36px" buttonTheme="black">
+            Claim
+          </Button>
         </div>
       </div>
     </GroupContainer>

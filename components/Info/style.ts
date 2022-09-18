@@ -62,30 +62,6 @@ export const InfoContainer = styled.div`
       align-items: center;
       gap: 24px;
       margin-top: 10px;
-
-      div:nth-child(1) {
-        padding: 11px 46px 13px;
-        border-radius: 32px;
-        background-color: #0c0e20;
-        font-size: 16px;
-        line-height: 1.5;
-        letter-spacing: 0.32px;
-        text-align: center;
-        color: #fff;
-        cursor: pointer;
-      }
-
-      div:nth-child(2) {
-        padding: 11px 34px 13px;
-        border-radius: 32px;
-        border: solid 2px #e6e8ec;
-        font-size: 16px;
-        line-height: 1.5;
-        letter-spacing: 0.32px;
-        text-align: center;
-        color: #141416;
-        cursor: pointer;
-      }
     }
   }
 
@@ -114,23 +90,8 @@ export const InfoContainer = styled.div`
           font-size: 16px;
           font-weight: 500;
           line-height: 1.5;
+          margin-bottom: 16px;
           color: #777e90;
-        }
-
-        .more-btn {
-          width: 130px;
-          display: flex;
-          justify-content: center;
-          padding: 15px 0px;
-          margin-top: 16px;
-          border-radius: 90px;
-          border: solid 2px #e6e8ec;
-          font-size: 16px;
-          font-weight: 600;
-          line-height: 1;
-          text-align: center;
-          color: #23262f;
-          cursor: pointer;
         }
       }
     }

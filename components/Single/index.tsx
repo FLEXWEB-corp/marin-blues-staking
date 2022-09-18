@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { singleData } from "../../pages/data";
 import AddNft from "../AddNft";
+import Button from "../Button";
 import StakingModal from "../StakingModal";
 import { SingleContainer } from "./style";
 
@@ -20,9 +21,15 @@ const Single = () => {
                 <p>{item.title}</p>
                 <p>{item.time}</p>
                 <p>{item.ort}</p>
-                <div onClick={() => setStakingModal((prev) => !prev)}>
+                <Button
+                  width="126px"
+                  height="36px"
+                  margin="10px 9px 0px"
+                  buttonTheme="white"
+                  onClick={() => setStakingModal((prev) => !prev)}
+                >
                   {item.type}
-                </div>
+                </Button>
               </div>
             </div>
             {singleData.length === idx + 1 && (

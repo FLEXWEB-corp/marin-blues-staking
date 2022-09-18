@@ -52,16 +52,6 @@ export const SingleContainer = styled.div`
           font-size: 16px;
           font-weight: 500;
         }
-        div:nth-child(4) {
-          margin: 10px 9px 0px;
-          padding: 4px 45px 8px;
-          border-radius: 32px;
-          border: solid 2px #e6e8ec;
-          font-size: 14px;
-          line-height: 1.71;
-          letter-spacing: 0.28px;
-          cursor: pointer;
-        }
       }
     }
     .plus_single_inner {

@@ -1,5 +1,6 @@
 import React from "react";
 import { infoData } from "../../pages/data";
+import Button from "../Button";
 import { InfoContainer } from "./style";
 
 const Info = () => {
@@ -19,8 +20,8 @@ const Info = () => {
           )}
         </div>
         <div className="button-container">
-          <div>Start All</div>
-          <div>Get All ORT</div>
+          <Button buttonTheme="black">Start All</Button>
+          <Button buttonTheme="white">Get All ORT</Button>
         </div>
       </div>
       <div className="right-inner">
@@ -29,10 +30,10 @@ const Info = () => {
             <h3>EVENT BOUNUS (10.3~10.16)</h3>
             <p>
               - Wizard Hat <br />
-              - Wizard Clothes<br />
-              - Wand
+              - Wizard Clothes
+              <br />- Wand
             </p>
-            <div className="more-btn"> View More</div>
+            <Button buttonTheme="white">View More</Button>
           </div>
           <img src="/images/character.png" />
         </div>

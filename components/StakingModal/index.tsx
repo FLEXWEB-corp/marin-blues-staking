@@ -1,6 +1,7 @@
 import React from "react";
 import Modal from "../Modal";
 import styled from "styled-components";
+import Button from "../Button";
 
 interface Props {
   status: string;
@@ -36,29 +37,11 @@ export const StakingModalContainer = styled.div`
     cursor: pointer;
   }
 
-  .black-btn {
+  .btn-inner {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 48px;
-    font-size: 16px;
-    color: #fcfcfd;
+    flex-direction: column;
+    gap: 8px;
     margin-top: 32px;
-    border-radius: 90px;
-    background-color: #141416;
-    cursor: pointer;
-    margin-bottom: 8px;
-  }
-
-  .white-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 48px;
-    color: #23262f;
-    border-radius: 90px;
-    border: solid 2px #e6e8ec;
-    cursor: pointer;
   }
 `;
 
@@ -77,12 +60,16 @@ const StakingModal = ({ status, onClose }: Props) => {
             ? "The staking of that NFT has not ended. You can only receive staking rewards so far."
             : "Staking has ended successfully! You can get rewards and restart or quit staking"}
         </p>
-        <div className="black-btn">
-          {status === "ing"
-            ? "Get Currently Obtainable Rewards Only"
-            : "Claim & Restart Staking"}
+        <div className="btn-inner">
+          <Button width="384px" height="48px" buttonTheme="black">
+            {status === "ing"
+              ? "Get Currently Obtainable Rewards Only"
+              : "Claim & Restart Staking"}
+          </Button>
+          <Button width="384px" height="48px" buttonTheme="white">
+            Get Rewards & Quit Staking
+          </Button>
         </div>
-        <div className="white-btn">Get Rewards & Quit Staking</div>
       </StakingModalContainer>
     </Modal>
   );

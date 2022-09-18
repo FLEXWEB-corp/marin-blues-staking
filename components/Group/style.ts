@@ -59,18 +59,6 @@ export const GroupContainer = styled.div`
     }
   }
 
-  .claim-btn {
-    padding: 5px 37px 7px;
-    border-radius: 32px;
-    background-color: #141416;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.5;
-    letter-spacing: 0.32px;
-    cursor: pointer;
-  }
-
   .plus_single_inner {
     display: flex;
     justify-content: center;
