@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const MainContainer = styled.div`
   padding: 120px 160px 70px 160px;
@@ -32,7 +32,7 @@ export const MainContainer = styled.div`
       cursor: pointer;
     }
   }
-`;
+`
 
 export const TabModal = styled.div`
   position: absolute;
@@ -70,4 +70,4 @@ export const TabModal = styled.div`
       color: #5e4fff;
     }
   }
-`;
+`
