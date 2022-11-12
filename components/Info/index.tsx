@@ -1,23 +1,30 @@
-import React from "react";
-import { infoData } from "../../pages/data";
-import Button from "../Button";
-import { InfoContainer } from "./style";
+import React from 'react';
+import Button from '../Button';
+import { InfoContainer } from './style';
 
-const Info = () => {
+const Info = ({ totalCount }: { totalCount: number }) => {
   return (
     <InfoContainer>
       <div className="left-inner">
         <div className="left-inner-box">
-          {infoData.map(
-            (item: { title: string; count: number }, idx: number) => (
-              <div className="item-box">
-                <div className="data-box">
-                  <p>{item.title}</p>
-                  <p className={idx !== 0 ? "color" : ""}>{item.count}</p>
-                </div>
-              </div>
-            )
-          )}
+          <div className="item-box">
+            <div className="data-box">
+              <p>Total NFTs</p>
+              <p>{totalCount}</p>
+            </div>
+          </div>
+          <div className="item-box">
+            <div className="data-box">
+              <p>Staking NFTs</p>
+              <p className="color">8</p>
+            </div>
+          </div>
+          <div className="item-box">
+            <div className="data-box">
+              <p>Total ORT</p>
+              <p className="color">99.9</p>
+            </div>
+          </div>
         </div>
         <div className="button-container">
           <Button buttonTheme="black">Start All</Button>

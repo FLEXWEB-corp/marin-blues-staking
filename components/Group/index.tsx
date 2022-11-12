@@ -1,6 +1,6 @@
-import React from "react";
-import Button from "../Button";
-import { GroupContainer } from "./style";
+import React from 'react';
+import Button from '../Button';
+import { GroupContainer } from './style';
 
 const Group = () => {
   return (
@@ -25,10 +25,10 @@ const Group = () => {
           </div>
         </div>
         <div className="info-box">
-          {["BONUS : 10%", "00d : 00h : 00m", "0 ORT"].map((item, idx) => (
-            <div className="item-box">
+          {['BONUS : 10%', '00d : 00h : 00m', '0 ORT'].map((item, idx) => (
+            <div className="item-box" key={idx}>
               <div className="data-box">
-                <p className={idx === 2 ? "color" : ""}>{item}</p>
+                <p className={idx === 2 ? 'color' : ''}>{item}</p>
               </div>
             </div>
           ))}

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const SingleContainer = styled.div`
   margin-top: 80px;
@@ -12,16 +12,18 @@ export const SingleContainer = styled.div`
   }
 
   .single-container {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
     gap: 28px;
 
     .item-inner {
       img {
+        display: block;
         width: 156px;
         height: 156px;
         border: 2px solid #5e4fff;
         background-color: #fcfcfd;
+        margin: 0 auto;
       }
       .info-inner {
         text-align: center;

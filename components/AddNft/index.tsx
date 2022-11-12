@@ -1,10 +1,12 @@
-import React from "react";
-import Modal from "../Modal";
-import styled from "styled-components";
-import { singleData } from "../../pages/data";
+import React from 'react';
+import Modal from '../Modal';
+import styled from 'styled-components';
+import { singleData } from '../../pages/data';
 
-interface Props {
+interface AddNftProps {
+  nfts: any[];
   onClose: () => void;
+  onStaking: (id: number, contractAddress: string) => void;
 }
 
 export const AddNftContainer = styled.div`
@@ -90,7 +92,7 @@ export const AddNftContainer = styled.div`
   }
 `;
 
-const AddNft = ({ onClose }: Props) => {
+const AddNft = ({ nfts, onClose, onStaking }: AddNftProps) => {
   return (
     <Modal height="600px" onClose={onClose}>
       <AddNftContainer>
@@ -102,15 +104,28 @@ const AddNft = ({ onClose }: Props) => {
         </div>
         <p>This is a list of NFTs for which staking services are available.</p>
         <div className="nft-list-inner">
-          {singleData.map((item) => (
-            <div className="item-inner">
-              <img src={item.url} />
-              <div className="text-inner">
-                <p>{item.title}</p>
-                <p>{item.ort}</p>
+          {nfts &&
+            nfts.length > 0 &&
+            nfts.map(item => (
+              <div
+                className="item-inner"
+                key={item.id.tokenId}
+                onClick={() => {
+                  onStaking(
+                    parseInt(item.id.tokenId, 16),
+                    item.contract.address,
+                  );
+
+                  onClose();
+                }}
+              >
+                <img src={item.media[0]?.thumbnail || item.media[0]?.gateway} />
+                <div className="text-inner">
+                  <p>{item.title}</p>
+                  <p>{parseInt(item.id.tokenId, 16)}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </AddNftContainer>
     </Modal>
