@@ -1,20 +1,17 @@
 import type { NextPage } from 'next';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Group from '../components/Group';
 import Info from '../components/Info';
 import Single from '../components/Single';
 import { StackingPageProps } from './index.types';
 import { MainContainer, TabModal } from './index.styles';
-import { Alchemy, Network } from 'alchemy-sdk';
 import Web3 from 'web3';
 
 import useAccount from '../hooks/useAccount';
 import useWeb3 from '../hooks/useWeb3';
 import useStaking from '../hooks/useStaking';
-
-// const alchemy = new Alchemy(settings);
-
-// const web3 = new Web3(window.ethereum);
+import AddNft from '../components/AddNft';
+import SelectNft from '../components/SelectNft';
 
 const StackingPage: NextPage<StackingPageProps> = ({
   tab,
@@ -22,35 +19,32 @@ const StackingPage: NextPage<StackingPageProps> = ({
   onChangeTab,
   onClickTabChoice,
 }): JSX.Element => {
-  const [data, setData] = useState<any[]>([]);
-  const { account } = useAccount();
-  const [web3, smartContract] = useWeb3();
-  const { state } = useStaking();
+  const [addModal, setAddModal] = useState(false);
+  const [groupModal, setGroupModal] = useState(false);
+  const [activeGroupId, setActiveGroupId] = useState<number | null>(null);
+  const {
+    state,
+    onStaking,
+    onUnStaking,
+    onSelectGroup,
+    onGroupStaking,
+    onGroupUnStaking,
+  } = useStaking();
 
-  const onStaking = useCallback(
-    async (id: number) => {
-      await smartContract.methods
-        .stake(id, '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d')
-        .call();
+  const onSelect = useCallback(
+    (tokenId: number) => {
+      activeGroupId !== null && onSelectGroup(tokenId, activeGroupId);
     },
-    [smartContract, account],
+    [activeGroupId],
   );
 
-  useEffect(() => {
-    if (!smartContract || !account) return;
+  console.log('state:', state);
 
-    (async () => {
-      const options = {
-        method: 'GET',
-        headers: { accept: 'application/json' },
-      };
-
-      console.log(
-        'totalStaked:',
-        await smartContract.methods.getStakedTokenList(account).call(),
-      );
-    })();
-  }, [smartContract, account]);
+  const totalORT = useMemo(() => {
+    return state.stakingNfts
+      .reduce((acc, cv) => (acc += +cv.reward), 0)
+      .toFixed(5);
+  }, [state.stakingNfts]);
 
   return (
     <MainContainer>
@@ -77,9 +71,43 @@ const StackingPage: NextPage<StackingPageProps> = ({
           )}
         </div>
       </div>
-      <Info totalCount={state.totalCount} />
-      <Single data={state.nfts} onStaking={onStaking} />
-      <Group />
+      <Info
+        totalCount={state.totalCount}
+        stakingNfts={state.stakingNfts.length}
+        totalORT={totalORT}
+      />
+      <Single
+        data={state.stakingNfts}
+        onClick={() => setAddModal(true)}
+        onUnStaking={onUnStaking}
+      />
+      <Group
+        groupNfts={state.groupNfts}
+        onClick={(id: number) => {
+          setGroupModal(true);
+          setActiveGroupId(id);
+        }}
+        onGroupStaking={onGroupStaking}
+        onGroupUnStaking={onGroupUnStaking}
+      />
+      {addModal && (
+        <AddNft
+          nfts={state.stakableNfts}
+          onClose={() => setAddModal(false)}
+          onStaking={onStaking}
+        />
+      )}
+      {groupModal && (
+        <SelectNft
+          nfts={state.stakableNfts.filter(nft =>
+            state.groupNfts.every(
+              groupNft => groupNft?.tokenId !== nft.tokenId,
+            ),
+          )}
+          onClose={() => setGroupModal(false)}
+          onSelect={onSelect}
+        />
+      )}
     </MainContainer>
   );
 };

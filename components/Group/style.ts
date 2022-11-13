@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const GroupContainer = styled.div`
   margin-top: 80px;
@@ -44,7 +44,7 @@ export const GroupContainer = styled.div`
       height: 64px;
       opacity: 0.5;
       background-color: #777e90;
-      content: "";
+      content: '';
     }
     .item-box:last-child::after {
       opacity: 0;
@@ -68,5 +68,11 @@ export const GroupContainer = styled.div`
     border: solid 2px #5e4fff;
     background-color: #fcfcfd;
     cursor: pointer;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 `;

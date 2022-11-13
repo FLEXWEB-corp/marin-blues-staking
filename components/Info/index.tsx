@@ -2,7 +2,15 @@ import React from 'react';
 import Button from '../Button';
 import { InfoContainer } from './style';
 
-const Info = ({ totalCount }: { totalCount: number }) => {
+const Info = ({
+  totalCount,
+  stakingNfts,
+  totalORT,
+}: {
+  totalCount: number;
+  stakingNfts: number;
+  totalORT: number;
+}) => {
   return (
     <InfoContainer>
       <div className="left-inner">
@@ -16,13 +24,13 @@ const Info = ({ totalCount }: { totalCount: number }) => {
           <div className="item-box">
             <div className="data-box">
               <p>Staking NFTs</p>
-              <p className="color">8</p>
+              <p className="color">{stakingNfts}</p>
             </div>
           </div>
           <div className="item-box">
             <div className="data-box">
               <p>Total ORT</p>
-              <p className="color">99.9</p>
+              <p className="color">{totalORT}</p>
             </div>
           </div>
         </div>

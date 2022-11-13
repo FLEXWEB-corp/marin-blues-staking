@@ -3,10 +3,10 @@ import Modal from '../Modal';
 import styled from 'styled-components';
 import { singleData } from '../../pages/data';
 
-interface AddNftProps {
+interface SelectNftProps {
   nfts: any[];
   onClose: () => void;
-  onStaking: (id: number, contractAddress: string) => void;
+  onSelect: (id: number) => void;
 }
 
 export const AddNftContainer = styled.div`
@@ -92,7 +92,7 @@ export const AddNftContainer = styled.div`
   }
 `;
 
-const AddNft = ({ nfts, onClose, onStaking }: AddNftProps) => {
+const SelectNft = ({ nfts, onClose, onSelect }: SelectNftProps) => {
   return (
     <Modal height="600px" onClose={onClose}>
       <AddNftContainer>
@@ -111,8 +111,7 @@ const AddNft = ({ nfts, onClose, onStaking }: AddNftProps) => {
                 className="item-inner"
                 key={item.tokenId}
                 onClick={() => {
-                  onStaking(item.tokenId, item.contract.address);
-
+                  onSelect(item.tokenId);
                   onClose();
                 }}
               >
@@ -135,4 +134,4 @@ const AddNft = ({ nfts, onClose, onStaking }: AddNftProps) => {
   );
 };
 
-export default AddNft;
+export default SelectNft;

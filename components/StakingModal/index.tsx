@@ -1,11 +1,12 @@
-import React from "react";
-import Modal from "../Modal";
-import styled from "styled-components";
-import Button from "../Button";
+import React from 'react';
+import Modal from '../Modal';
+import styled from 'styled-components';
+import Button from '../Button';
 
 interface Props {
   status: string;
   onClose: () => void;
+  onUnStaking: () => void;
 }
 
 export const StakingModalContainer = styled.div`
@@ -45,7 +46,7 @@ export const StakingModalContainer = styled.div`
   }
 `;
 
-const StakingModal = ({ status, onClose }: Props) => {
+const StakingModal = ({ status, onClose, onUnStaking }: Props) => {
   return (
     <Modal onClose={onClose}>
       <StakingModalContainer>
@@ -56,17 +57,25 @@ const StakingModal = ({ status, onClose }: Props) => {
           </div>
         </div>
         <p>
-          {status === "ing"
-            ? "The staking of that NFT has not ended. You can only receive staking rewards so far."
-            : "Staking has ended successfully! You can get rewards and restart or quit staking"}
+          {status === 'ing'
+            ? 'The staking of that NFT has not ended. You can only receive staking rewards so far.'
+            : 'Staking has ended successfully! You can get rewards and restart or quit staking'}
         </p>
         <div className="btn-inner">
           <Button width="384px" height="48px" buttonTheme="black">
-            {status === "ing"
-              ? "Get Currently Obtainable Rewards Only"
-              : "Claim & Restart Staking"}
+            {status === 'ing'
+              ? 'Get Currently Obtainable Rewards Only'
+              : 'Claim & Restart Staking'}
           </Button>
-          <Button width="384px" height="48px" buttonTheme="white">
+          <Button
+            width="384px"
+            height="48px"
+            buttonTheme="white"
+            onClick={() => {
+              onUnStaking();
+              onClose();
+            }}
+          >
             Get Rewards & Quit Staking
           </Button>
         </div>

@@ -1,15 +1,20 @@
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import useAccount from './useAccount';
+import useWeb3 from './useWeb3';
 
 export type Category = 'toxic' | 'toxicSpecial' | 'foolkatz' | 'succubus';
 
 type StakingState = {
-  pageNo: number;
   nfts: any[];
   totalCount: number;
+  groupNfts: any[];
+  stakingNfts: any[];
+  stakableNfts: any[];
 };
 
 const BASE_URL = 'https://eth-goerli.g.alchemy.com/nft/v2';
 const OWNER_ADDRESS = '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d';
+const nftContract = '0x185780AD37a6018b660cAe29Ec83581a67ea28b7';
 const API_KEY = '7FCTRHjK9c73oJcP5HXEcif9V8WahYyo';
 
 const contractQuery =
@@ -20,93 +25,281 @@ function reducer(state: StakingState, action: any): StakingState {
     case 'GET_NFTS':
       return {
         ...state,
-        nfts: action.payload,
+        nfts: action.payload.ownedNfts,
+        stakingNfts: action.payload.stakingNfts,
+        stakableNfts: action.payload.stakableNfts,
         totalCount: action.totalCount,
       };
-
-    case 'CHANGE_PAGE':
-      return { ...state, pageNo: action.payload };
+    case 'GROUP_SELECT':
+      return {
+        ...state,
+        groupNfts: state.groupNfts.map((nft, idx) =>
+          idx === action.payload.groupId
+            ? state.stakableNfts.find(
+                el => el.tokenId === action.payload.tokenId,
+              )
+            : nft,
+        ),
+      };
+    case 'STAKE':
+      return {
+        ...state,
+        stakingNfts: state.stakingNfts.concat(action.payload.stakingNft),
+        stakableNfts: state.stakableNfts.filter(
+          nft => nft.tokenId !== action.payload.tokenId,
+        ),
+      };
+    case 'UNSTAKE':
+      return {
+        ...state,
+        stakingNfts: state.stakingNfts.filter(
+          nft => nft.tokenId !== action.payload,
+        ),
+        stakableNfts: state.stakableNfts.concat({
+          ...state.nfts.find(
+            nft => parseInt(nft.id.tokenId, 16) === action.payload,
+          ),
+          tokenId: action.payload,
+        }),
+      };
+    case 'GROUP_STAKE':
+      return {
+        ...state,
+        stakingNfts: state.stakingNfts.concat(action.payload.stakingNfts),
+        stakableNfts: state.stakableNfts.filter(
+          nft => !state.groupNfts.some(gNft => nft.tokenId === gNft?.tokenId),
+        ),
+        groupNfts: Array(5).fill(null),
+      };
+    case 'GROUP_UNSTAKE':
+      return {
+        ...state,
+        // stakingNfts: state.stakingNfts.filter(nft => !state.groupNfts.some(gNft => nft.tokenId === gNft.tokenId)),
+        // groupNfts: Array(5).fill(null),
+        // stakableNfts:
+      };
 
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
 }
 
-export default function useStaking(getUrl: string = '/staking/nft/mine') {
+export default function useStaking() {
+  const [web3, smartContract] = useWeb3();
+  const { account } = useAccount();
   const [state, dispatch] = useReducer(reducer, {
-    pageNo: 1,
     nfts: [],
     totalCount: 0,
+    groupNfts: Array(5).fill(null),
+    stakingNfts: [],
+    stakableNfts: [],
   });
 
+  const addReward = useCallback(
+    async (stakingNft: any) => {
+      const reward = await web3.utils.fromWei(
+        web3.utils.toBN(
+          await smartContract.methods
+            .getReward(
+              stakingNft.stakingAt,
+              stakingNft.tokenId,
+              '0x185780AD37a6018b660cAe29Ec83581a67ea28b7',
+              false,
+            )
+            .call(),
+        ),
+        'ether',
+      );
+
+      return reward;
+    },
+    [web3, smartContract],
+  );
+
   const getNfts = useCallback(async () => {
+    if (!smartContract || !account) return;
+
     const { ownedNfts, totalCount } = await fetch(
-      `${BASE_URL}/${API_KEY}/getNFTs?owner=${OWNER_ADDRESS}&
+      `${BASE_URL}/${API_KEY}/getNFTs?owner=${OWNER_ADDRESS}&${contractQuery}
     `,
       {
         method: 'GET',
       },
     ).then(res => res.json());
 
+    const stakedList = await smartContract.methods
+      .getStakedTokenList(account)
+      .call();
+
+    const { stakingNfts, stakableNfts } = ownedNfts.reduce(
+      (acc: any, cv: any) => {
+        const tokenId = parseInt(cv.id.tokenId, 16);
+
+        const stakedItem = stakedList.find(
+          (el: any) => +el.tokenId === tokenId,
+        );
+
+        if (stakedItem) {
+          acc.stakingNfts.push({
+            ...cv,
+            tokenId,
+            stakingAt: stakedItem.timestamp,
+          });
+        } else {
+          acc.stakableNfts.push({ ...cv, tokenId });
+        }
+
+        return acc;
+      },
+      {
+        stakingNfts: [],
+        stakableNfts: [],
+      },
+    );
+
+    const stakingNftsResult = await Promise.all(
+      stakingNfts.map(async (nft: any) => ({
+        ...nft,
+        reward: await addReward(nft),
+      })),
+    );
+
     dispatch({
       type: 'GET_NFTS',
       totalCount,
-      payload: ownedNfts,
+      payload: { ownedNfts, stakingNfts: stakingNftsResult, stakableNfts },
     });
-  }, [state.pageNo, getUrl]);
+  }, [smartContract, account]);
 
-  const onSelect = (id: number) => {
+  const setStakeNfts = (stakingNfts: any[], stakableNfts: any[]) => {
     dispatch({
-      type: 'SELECT',
-      payload: id,
+      type: 'SET_STAKE_NFTS',
+      payload: {
+        stakingNfts,
+        stakableNfts,
+      },
     });
   };
 
-  const onSelectAll = () => {
-    dispatch({ type: 'SELECT_ALL' });
+  const onSelectGroup = (tokenId: number, groupId: number) => {
+    dispatch({
+      type: 'GROUP_SELECT',
+      payload: { tokenId, groupId },
+    });
   };
 
-  const onUnSelectAll = () => {
-    dispatch({ type: 'UNSELECT_ALL' });
-  };
+  const onStaking = useCallback(
+    async (id: number) => {
+      try {
+        await smartContract.methods.stake(id, nftContract).send({
+          from: '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d',
+          to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
+          gasLimit: 500000,
+        });
 
-  const onStaking = async (id: number) => {
-    // try {
-    //   await api({
-    //     method: 'post',
-    //     url: '/staking/stak',
-    //     data: {
-    //       contract_address: '',
-    //       token_id: state.nfts.map((id) => String(id)),
-    //     },
-    //   });
-    // } catch (error) {
-    //   console.log(error);
-    // }
+        const stakedList = await smartContract.methods
+          .getStakedTokenList(account)
+          .call();
 
-    onUnSelectAll();
-  };
+        const stakedItem = stakedList.find((el: any) => +el.tokenId === id);
 
-  const onUnStaking = async () => {
-    try {
-      // await api({
-      //   method: 'post',
-      //   url: '/staking/unstak',
-      //   data: {
-      //     contract_address:'',
-      //     token_id: state.nfts.map((id) => String(id)),
-      //   },
-      // });
+        dispatch({
+          type: 'STAKE',
+          payload: {
+            stakingNft: {
+              ...state.stakableNfts.find(nft => nft.tokenId === id),
+              stakingAt: stakedItem.timestamp,
+              reward: await addReward({
+                ...state.stakableNfts.find(nft => nft.tokenId === id),
+                stakingAt: stakedItem.timestamp,
+              }),
+            },
+            tokenId: id,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [smartContract, account, state.stakableNfts],
+  );
 
-      onUnSelectAll();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const onUnStaking = useCallback(
+    async (tokenId: number) => {
+      try {
+        await smartContract.methods.unstake(tokenId, nftContract).send({
+          from: '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d',
+          to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
+          gasLimit: 500000,
+        });
 
-  const onChangePage = useCallback((page: number) => {
-    dispatch({ type: 'CHANGE_PAGE', payload: page });
-  }, []);
+        dispatch({
+          type: 'UNSTAKE',
+          payload: tokenId,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [smartContract],
+  );
+
+  const onGroupStaking = useCallback(async () => {
+    const stakeList = state.groupNfts.reduce((acc, cv) => {
+      if (cv) {
+        acc.push([account, cv.tokenId, nftContract, 0, false]);
+      }
+
+      return acc;
+    }, []);
+
+    const result = await smartContract.methods.groupStake(stakeList).send({
+      from: '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d',
+      to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
+      gasLimit: 500000 * stakeList.length,
+    });
+
+    const stakedList = await smartContract.methods
+      .getStakedTokenList(account)
+      .call();
+
+    const addItems = state.groupNfts.reduce((acc, cv) => {
+      if (cv) {
+        const stakedItem = stakedList.find(
+          (el: any) => +el.tokenId === cv.tokenId,
+        );
+
+        acc.push({ ...cv, stakingAt: stakedItem.timestamp, reward: 0 });
+      }
+
+      return acc;
+    }, []);
+
+    console.log(addItems);
+
+    dispatch({
+      type: 'GROUP_STAKE',
+      payload: {
+        stakingNfts: addItems,
+      },
+    });
+  }, [smartContract, state.groupNfts]);
+
+  const onGroupUnStaking = useCallback(async () => {
+    const unstakeList = state.groupNfts.reduce((acc, cv) => {
+      if (cv) {
+        acc.push([account, cv.tokenId, nftContract, 0, false]);
+      }
+
+      return acc;
+    }, []);
+
+    await smartContract.methods.groupUnstake(unstakeList).send({
+      from: '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d',
+      to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
+      gasLimit: 500000 * unstakeList.length,
+    });
+  }, [smartContract, state.groupNfts]);
 
   useEffect(() => {
     getNfts();
@@ -115,11 +308,11 @@ export default function useStaking(getUrl: string = '/staking/nft/mine') {
   return {
     state,
     getNfts,
-    onSelect,
-    onSelectAll,
-    onUnSelectAll,
     onStaking,
     onUnStaking,
-    onChangePage,
+    onGroupStaking,
+    onGroupUnStaking,
+    onSelectGroup,
+    setStakeNfts,
   };
 }

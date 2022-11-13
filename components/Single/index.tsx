@@ -1,21 +1,30 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { singleData } from '../../pages/data';
-import AddNft from '../AddNft';
 import Button from '../Button';
 import StakingModal from '../StakingModal';
 import { SingleContainer } from './style';
 
 const Single = ({
   data,
-  onStaking,
+  onClick,
+  onUnStaking,
 }: {
   data: any[];
-  onStaking: (id: number, contractAddress: string) => void;
+  onClick: () => void;
+  onUnStaking: (tokenId: number) => void;
 }) => {
-  const [addModal, setAddModal] = useState(false);
+  const [activeId, setActiveId] = useState<null | number>(null);
   const [stakingModal, setStakingModal] = useState(false);
 
-  console.log('data:', data);
+  const getElapsedHMS = (timestamp: number) => {
+    const elapsedSec = (Date.now() - timestamp * 1000) / 1000;
+
+    const elapsedHour = Math.floor(elapsedSec / 3600);
+    const elaspedMinute = Math.floor((elapsedSec % 3600) / 60);
+    const elaspedSecond = Math.floor((elapsedSec % 3600) % 60);
+
+    return `${elapsedHour}h : ${elaspedMinute}m : ${elaspedSecond}s`;
+  };
 
   return (
     <SingleContainer>
@@ -33,42 +42,38 @@ const Single = ({
                   }
                 />
                 <div className="info-inner">
-                  <p>{item.title}</p>
-                  <p>30h : 00m : 00s</p>
+                  <p>{item.title || item.contractMetadata.name}</p>
+                  {/* <p>30h : 00m : 00s</p> */}
+                  <p>{getElapsedHMS(item.stakingAt)}</p>
                   <p>{item.ort}</p>
                   <Button
                     width="126px"
                     height="36px"
                     margin="0 auto"
                     buttonTheme="white"
-                    onClick={() => setStakingModal(prev => !prev)}
+                    onClick={() => {
+                      setActiveId(item.tokenId);
+                      setStakingModal(prev => !prev);
+                    }}
                   >
-                    start
-                    {/* Claim */}
+                    Claim
                   </Button>
                 </div>
               </div>
-              {data.length === idx + 1 && (
-                <div
-                  className="plus_single_inner"
-                  onClick={() => setAddModal(prev => !prev)}
-                >
-                  <img src="/images/plus.png" />
-                </div>
-              )}
             </Fragment>
           ))}
+        <div className="plus_single_inner" onClick={onClick}>
+          <img src="/images/plus.png" />
+        </div>
       </div>
-
-      {addModal && (
-        <AddNft
-          nfts={data}
-          onClose={() => setAddModal(false)}
-          onStaking={onStaking}
-        />
-      )}
       {stakingModal && (
-        <StakingModal status="ing" onClose={() => setStakingModal(false)} />
+        <StakingModal
+          status="ing"
+          onClose={() => setStakingModal(false)}
+          onUnStaking={() => {
+            activeId && onUnStaking(activeId);
+          }}
+        />
       )}
     </SingleContainer>
   );
