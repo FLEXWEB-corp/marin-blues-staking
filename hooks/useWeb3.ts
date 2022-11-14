@@ -24,9 +24,7 @@ const useWeb3 = () => {
     if (!web3) getWeb3();
     else {
       (async () => {
-        // setSmartContract(new Web3EthContract(Abi, ABI_CONTRACT_ADDRESS));
-
-        setSmartContract(new web3.eth.Contract(Abi, ABI_CONTRACT_ADDRESS));
+        setSmartContract(new Web3EthContract(Abi, ABI_CONTRACT_ADDRESS));
       })();
     }
   }, [web3]);
