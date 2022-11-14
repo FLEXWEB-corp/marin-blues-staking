@@ -8,6 +8,7 @@ type StakingState = {
   nfts: any[];
   totalCount: number;
   groupNfts: any[];
+  groupUnStakingNfts: any[];
   stakingNfts: any[];
   stakableNfts: any[];
 };
@@ -36,6 +37,17 @@ function reducer(state: StakingState, action: any): StakingState {
         groupNfts: state.groupNfts.map((nft, idx) =>
           idx === action.payload.groupId
             ? state.stakableNfts.find(
+                el => el.tokenId === action.payload.tokenId,
+              )
+            : nft,
+        ),
+      };
+    case 'GROUP_UN_SELECT':
+      return {
+        ...state,
+        groupUnStakingNfts: state.groupUnStakingNfts.map((nft, idx) =>
+          idx === action.payload.groupId
+            ? state.stakingNfts.find(
                 el => el.tokenId === action.payload.tokenId,
               )
             : nft,
@@ -74,9 +86,16 @@ function reducer(state: StakingState, action: any): StakingState {
     case 'GROUP_UNSTAKE':
       return {
         ...state,
-        // stakingNfts: state.stakingNfts.filter(nft => !state.groupNfts.some(gNft => nft.tokenId === gNft.tokenId)),
-        // groupNfts: Array(5).fill(null),
-        // stakableNfts:
+        stakingNfts: state.stakingNfts.filter(
+          nft =>
+            !state.groupUnStakingNfts.some(
+              gNft => nft.tokenId === gNft?.tokenId,
+            ),
+        ),
+        stakableNfts: state.stakableNfts.concat(
+          state.groupUnStakingNfts.filter(el => el),
+        ),
+        groupUnStakingNfts: Array(5).fill(null),
       };
 
     default:
@@ -91,6 +110,7 @@ export default function useStaking() {
     nfts: [],
     totalCount: 0,
     groupNfts: Array(5).fill(null),
+    groupUnStakingNfts: Array(5).fill(null),
     stakingNfts: [],
     stakableNfts: [],
   });
@@ -187,6 +207,12 @@ export default function useStaking() {
       payload: { tokenId, groupId },
     });
   };
+  const onSelectUnGroup = (tokenId: number, groupId: number) => {
+    dispatch({
+      type: 'GROUP_UN_SELECT',
+      payload: { tokenId, groupId },
+    });
+  };
 
   const onStaking = useCallback(
     async (id: number) => {
@@ -275,8 +301,6 @@ export default function useStaking() {
       return acc;
     }, []);
 
-    console.log(addItems);
-
     dispatch({
       type: 'GROUP_STAKE',
       payload: {
@@ -286,7 +310,7 @@ export default function useStaking() {
   }, [smartContract, state.groupNfts]);
 
   const onGroupUnStaking = useCallback(async () => {
-    const unstakeList = state.groupNfts.reduce((acc, cv) => {
+    const unstakeList = state.groupUnStakingNfts.reduce((acc, cv) => {
       if (cv) {
         acc.push([account, cv.tokenId, nftContract, 0, false]);
       }
@@ -298,6 +322,10 @@ export default function useStaking() {
       from: '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d',
       to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
       gasLimit: 500000 * unstakeList.length,
+    });
+
+    dispatch({
+      type: 'GROUP_UNSTAKE',
     });
   }, [smartContract, state.groupNfts]);
 
@@ -313,6 +341,7 @@ export default function useStaking() {
     onGroupStaking,
     onGroupUnStaking,
     onSelectGroup,
+    onSelectUnGroup,
     setStakeNfts,
   };
 }

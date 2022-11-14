@@ -21,12 +21,14 @@ const StackingPage: NextPage<StackingPageProps> = ({
 }): JSX.Element => {
   const [addModal, setAddModal] = useState(false);
   const [groupModal, setGroupModal] = useState(false);
+  const [groupUnModal, setGroupUnModal] = useState(false);
   const [activeGroupId, setActiveGroupId] = useState<number | null>(null);
   const {
     state,
     onStaking,
     onUnStaking,
     onSelectGroup,
+    onSelectUnGroup,
     onGroupStaking,
     onGroupUnStaking,
   } = useStaking();
@@ -34,6 +36,12 @@ const StackingPage: NextPage<StackingPageProps> = ({
   const onSelect = useCallback(
     (tokenId: number) => {
       activeGroupId !== null && onSelectGroup(tokenId, activeGroupId);
+    },
+    [activeGroupId],
+  );
+  const onSelectUn = useCallback(
+    (tokenId: number) => {
+      activeGroupId !== null && onSelectUnGroup(tokenId, activeGroupId);
     },
     [activeGroupId],
   );
@@ -82,9 +90,22 @@ const StackingPage: NextPage<StackingPageProps> = ({
         onUnStaking={onUnStaking}
       />
       <Group
+        title={'Group Staking'}
+        type="staking"
         groupNfts={state.groupNfts}
         onClick={(id: number) => {
           setGroupModal(true);
+          setActiveGroupId(id);
+        }}
+        onGroupStaking={onGroupStaking}
+        onGroupUnStaking={onGroupUnStaking}
+      />
+      <Group
+        title={'Group UnStaking'}
+        type="unstaking"
+        groupNfts={state.groupUnStakingNfts}
+        onClick={(id: number) => {
+          setGroupUnModal(true);
           setActiveGroupId(id);
         }}
         onGroupStaking={onGroupStaking}
@@ -106,6 +127,17 @@ const StackingPage: NextPage<StackingPageProps> = ({
           )}
           onClose={() => setGroupModal(false)}
           onSelect={onSelect}
+        />
+      )}
+      {groupUnModal && (
+        <SelectNft
+          nfts={state.stakingNfts.filter(nft =>
+            state.groupUnStakingNfts.every(
+              groupNft => groupNft?.tokenId !== nft.tokenId,
+            ),
+          )}
+          onClose={() => setGroupUnModal(false)}
+          onSelect={onSelectUn}
         />
       )}
     </MainContainer>

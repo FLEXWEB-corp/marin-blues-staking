@@ -3,11 +3,15 @@ import Button from '../Button';
 import { GroupContainer } from './style';
 
 const Group = ({
+  title,
+  type,
   groupNfts,
   onClick,
   onGroupStaking,
   onGroupUnStaking,
 }: {
+  title: string;
+  type: 'staking' | 'unstaking';
   groupNfts: any[];
   onClick: (id: number) => void;
   onGroupStaking: () => void;
@@ -15,7 +19,7 @@ const Group = ({
 }) => {
   return (
     <GroupContainer>
-      <h2>Group Staking</h2>
+      <h2>{title}</h2>
       <div className="group-inner">
         <div className="img-box">
           {groupNfts.map((el: any, idx) => (
@@ -39,33 +43,37 @@ const Group = ({
           ))}
         </div>
         <div className="info-box">
-          {[
-            'BONUS : 10%',
-            '00d : 00h : 00m',
-            groupNfts.every(el => el) ? '1 ORT' : '0 ORT',
-          ].map((item, idx) => (
-            <div className="item-box" key={idx}>
-              <div className="data-box">
-                <p className={idx === 2 ? 'color' : ''}>{item}</p>
+          {type === 'staking' &&
+            [
+              'BONUS : 10%',
+              '00d : 00h : 00m',
+              groupNfts.every(el => el) ? '1 ORT' : '0 ORT',
+            ].map((item, idx) => (
+              <div className="item-box" key={idx}>
+                <div className="data-box">
+                  <p className={idx === 2 ? 'color' : ''}>{item}</p>
+                </div>
               </div>
-            </div>
-          ))}
-          {/* <Button
-            width="125px"
-            height="36px"
-            buttonTheme="black"
-            onClick={onGroupUnStaking}
-          >
-            claim
-          </Button> */}
-          <Button
-            width="125px"
-            height="36px"
-            buttonTheme="black"
-            onClick={onGroupStaking}
-          >
-            start
-          </Button>
+            ))}
+          {type === 'unstaking' ? (
+            <Button
+              width="125px"
+              height="36px"
+              buttonTheme="black"
+              onClick={onGroupUnStaking}
+            >
+              claim
+            </Button>
+          ) : (
+            <Button
+              width="125px"
+              height="36px"
+              buttonTheme="black"
+              onClick={onGroupStaking}
+            >
+              start
+            </Button>
+          )}
         </div>
       </div>
     </GroupContainer>
