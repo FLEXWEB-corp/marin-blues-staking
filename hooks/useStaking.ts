@@ -105,6 +105,7 @@ function reducer(state: StakingState, action: any): StakingState {
 export default function useStaking() {
   const [web3, smartContract] = useWeb3();
   const { account } = useAccount();
+
   const [state, dispatch] = useReducer(reducer, {
     nfts: [],
     totalCount: 0,
@@ -266,7 +267,7 @@ export default function useStaking() {
         console.log(error);
       }
     },
-    [smartContract],
+    [smartContract, account],
   );
 
   const onGroupStaking = useCallback(async () => {
@@ -306,7 +307,7 @@ export default function useStaking() {
         stakingNfts: addItems,
       },
     });
-  }, [smartContract, state.groupNfts]);
+  }, [smartContract, state.groupNfts, account]);
 
   const onGroupUnStaking = useCallback(async () => {
     const unstakeList = state.groupUnStakingNfts.reduce((acc, cv) => {
@@ -326,7 +327,7 @@ export default function useStaking() {
     dispatch({
       type: 'GROUP_UNSTAKE',
     });
-  }, [smartContract, state.groupNfts]);
+  }, [smartContract, state.groupNfts, account]);
 
   useEffect(() => {
     getNfts();
