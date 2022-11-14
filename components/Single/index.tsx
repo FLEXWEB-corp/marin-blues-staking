@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { singleData } from '../../pages/data';
 import Button from '../Button';
 import StakingModal from '../StakingModal';
 import { SingleContainer } from './style';
