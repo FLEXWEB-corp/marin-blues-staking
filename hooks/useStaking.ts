@@ -11,6 +11,9 @@ type StakingState = {
   groupUnStakingNfts: any[];
   stakingNfts: any[];
   stakableNfts: any[];
+  loading: boolean;
+  loadingText: string;
+  error: boolean;
 };
 
 const BASE_URL = 'https://eth-goerli.g.alchemy.com/nft/v2';
@@ -30,6 +33,15 @@ function reducer(state: StakingState, action: any): StakingState {
         stakingNfts: action.payload.stakingNfts,
         stakableNfts: action.payload.stakableNfts,
         totalCount: action.totalCount,
+      };
+    case 'LOADING':
+      return { ...state, loading: true, loadingText: action.payload };
+    case 'ERROR':
+      return {
+        ...state,
+        loading: false,
+        error: true,
+        loadingText: action.payload,
       };
     case 'GROUP_SELECT':
       return {
@@ -56,6 +68,7 @@ function reducer(state: StakingState, action: any): StakingState {
     case 'STAKE':
       return {
         ...state,
+        loading: false,
         stakingNfts: state.stakingNfts.concat(action.payload.stakingNft),
         stakableNfts: state.stakableNfts.filter(
           nft => nft.tokenId !== action.payload.tokenId,
@@ -64,6 +77,7 @@ function reducer(state: StakingState, action: any): StakingState {
     case 'UNSTAKE':
       return {
         ...state,
+        loading: false,
         stakingNfts: state.stakingNfts.filter(
           nft => nft.tokenId !== action.payload,
         ),
@@ -77,6 +91,7 @@ function reducer(state: StakingState, action: any): StakingState {
     case 'GROUP_STAKE':
       return {
         ...state,
+        loading: false,
         stakingNfts: state.stakingNfts.concat(action.payload.stakingNfts),
         stakableNfts: state.stakableNfts.filter(
           nft => !state.groupNfts.some(gNft => nft.tokenId === gNft?.tokenId),
@@ -86,6 +101,7 @@ function reducer(state: StakingState, action: any): StakingState {
     case 'GROUP_UNSTAKE':
       return {
         ...state,
+        loading: false,
         stakingNfts: state.stakingNfts.filter(
           nft =>
             !state.groupUnStakingNfts.some(
@@ -114,6 +130,9 @@ export default function useStaking() {
     groupUnStakingNfts: Array(5).fill(null),
     stakingNfts: [],
     stakableNfts: [],
+    loading: false,
+    loadingText: '',
+    error: false,
   });
 
   const addReward = useCallback(
@@ -218,6 +237,11 @@ export default function useStaking() {
   const onStaking = useCallback(
     async (id: number) => {
       try {
+        dispatch({
+          type: 'LOADING',
+          payload: '스테이킹이 진행중입니다.\n창을 닫지마세요.',
+        });
+
         await smartContract.methods.stake(id, nftContract).send({
           from: account,
           to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
@@ -246,6 +270,11 @@ export default function useStaking() {
         });
       } catch (error) {
         console.log(error);
+
+        dispatch({
+          type: 'ERROR',
+          payload: '에러가 발생했습니다.\n새로고침후 다시 시도해주세요.',
+        });
       }
     },
     [smartContract, account, state.stakableNfts],
@@ -253,6 +282,11 @@ export default function useStaking() {
 
   const onUnStaking = useCallback(
     async (tokenId: number) => {
+      dispatch({
+        type: 'LOADING',
+        payload: '언스테이킹이 진행중입니다.\n창을 닫지마세요.',
+      });
+
       try {
         await smartContract.methods.unstake(tokenId, nftContract).send({
           from: account,
@@ -266,6 +300,11 @@ export default function useStaking() {
         });
       } catch (error) {
         console.log(error);
+
+        dispatch({
+          type: 'ERROR',
+          payload: '에러가 발생했습니다.\n새로고침후 다시 시도해주세요.',
+        });
       }
     },
     [smartContract, account],
@@ -280,54 +319,78 @@ export default function useStaking() {
       return acc;
     }, []);
 
-    const result = await smartContract.methods.groupStake(stakeList).send({
-      from: account,
-      to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
-      gasLimit: 500000 * stakeList.length,
-    });
-
-    const stakedList = await smartContract.methods
-      .getStakedTokenList(account)
-      .call();
-
-    const addItems = state.groupNfts.reduce((acc, cv) => {
-      if (cv) {
-        const stakedItem = stakedList.find(
-          (el: any) => +el.tokenId === cv.tokenId,
-        );
-
-        acc.push({ ...cv, stakingAt: stakedItem.timestamp, reward: 0 });
-      }
-
-      return acc;
-    }, []);
-
     dispatch({
-      type: 'GROUP_STAKE',
-      payload: {
-        stakingNfts: addItems,
-      },
+      type: 'LOADING',
+      payload: '그룹 스테이킹이 진행중입니다.\n창을 닫지마세요.',
     });
+
+    try {
+      await smartContract.methods.groupStake(stakeList).send({
+        from: account,
+        to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
+        gasLimit: 500000 * stakeList.length,
+      });
+
+      const stakedList = await smartContract.methods
+        .getStakedTokenList(account)
+        .call();
+
+      const addItems = state.groupNfts.reduce((acc, cv) => {
+        if (cv) {
+          const stakedItem = stakedList.find(
+            (el: any) => +el.tokenId === cv.tokenId,
+          );
+
+          acc.push({ ...cv, stakingAt: stakedItem.timestamp, reward: 0 });
+        }
+
+        return acc;
+      }, []);
+
+      dispatch({
+        type: 'GROUP_STAKE',
+        payload: {
+          stakingNfts: addItems,
+        },
+      });
+    } catch (error) {
+      dispatch({
+        type: 'ERROR',
+        payload: '에러가 발생했습니다.\n새로고침후 다시 시도해주세요.',
+      });
+    }
   }, [smartContract, state.groupNfts, account]);
 
   const onGroupUnStaking = useCallback(async () => {
-    const unstakeList = state.groupUnStakingNfts.reduce((acc, cv) => {
-      if (cv) {
-        acc.push([account, cv.tokenId, nftContract, 0, false]);
-      }
-
-      return acc;
-    }, []);
-
-    await smartContract.methods.groupUnstake(unstakeList).send({
-      from: account,
-      to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
-      gasLimit: 500000 * unstakeList.length,
-    });
-
     dispatch({
-      type: 'GROUP_UNSTAKE',
+      type: 'LOADING',
+      payload: '그룹 언스테이킹이 진행중입니다.\n창을 닫지마세요.',
     });
+
+    try {
+      const unstakeList = state.groupUnStakingNfts.reduce((acc, cv) => {
+        if (cv) {
+          acc.push([account, cv.tokenId, nftContract, 0, false]);
+        }
+
+        return acc;
+      }, []);
+
+      await smartContract.methods.groupUnstake(unstakeList).send({
+        from: account,
+        to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
+        gasLimit: 500000 * unstakeList.length,
+      });
+
+      dispatch({
+        type: 'GROUP_UNSTAKE',
+      });
+    } catch (error) {
+      dispatch({
+        type: 'ERROR',
+        payload: '에러가 발생했습니다.\n새로고침후 다시 시도해주세요.',
+      });
+    }
   }, [smartContract, state.groupNfts, account]);
 
   useEffect(() => {

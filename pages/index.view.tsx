@@ -12,6 +12,7 @@ import useWeb3 from '../hooks/useWeb3';
 import useStaking from '../hooks/useStaking';
 import AddNft from '../components/AddNft';
 import SelectNft from '../components/SelectNft';
+import Modal from '../components/Modal';
 
 const StackingPage: NextPage<StackingPageProps> = ({
   tab,
@@ -139,6 +140,51 @@ const StackingPage: NextPage<StackingPageProps> = ({
           onClose={() => setGroupUnModal(false)}
           onSelect={onSelectUn}
         />
+      )}
+      {(state.loading || state.error) && (
+        <Modal onClose={() => {}}>
+          <h2
+            style={{
+              whiteSpace: 'pre-wrap',
+              textAlign: 'center',
+              lineHeight: '1.5',
+            }}
+          >
+            {state.loadingText}
+          </h2>
+          <svg
+            style={{
+              width: '100px',
+              height: '100px',
+              display: 'block',
+              margin: '0 auto',
+            }}
+            version="1.1"
+            id="L9"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+            x="0px"
+            y="0px"
+            viewBox="0 0 100 100"
+            enableBackground="new 0 0 0 0"
+            xmlSpace="preserve"
+          >
+            <path
+              fill="#00c389"
+              d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
+            >
+              <animateTransform
+                attributeName="transform"
+                attributeType="XML"
+                type="rotate"
+                dur="1s"
+                from="0 50 50"
+                to="360 50 50"
+                repeatCount="indefinite"
+              ></animateTransform>
+            </path>
+          </svg>
+        </Modal>
       )}
     </MainContainer>
   );
