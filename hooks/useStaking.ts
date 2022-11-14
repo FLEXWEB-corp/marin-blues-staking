@@ -14,7 +14,6 @@ type StakingState = {
 };
 
 const BASE_URL = 'https://eth-goerli.g.alchemy.com/nft/v2';
-const OWNER_ADDRESS = '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d';
 const nftContract = '0x185780AD37a6018b660cAe29Ec83581a67ea28b7';
 const API_KEY = '7FCTRHjK9c73oJcP5HXEcif9V8WahYyo';
 
@@ -140,7 +139,7 @@ export default function useStaking() {
     if (!smartContract || !account) return;
 
     const { ownedNfts, totalCount } = await fetch(
-      `${BASE_URL}/${API_KEY}/getNFTs?owner=${OWNER_ADDRESS}&${contractQuery}
+      `${BASE_URL}/${API_KEY}/getNFTs?owner=${account}&${contractQuery}
     `,
       {
         method: 'GET',
@@ -218,7 +217,7 @@ export default function useStaking() {
     async (id: number) => {
       try {
         await smartContract.methods.stake(id, nftContract).send({
-          from: '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d',
+          from: account,
           to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
           gasLimit: 500000,
         });
@@ -254,7 +253,7 @@ export default function useStaking() {
     async (tokenId: number) => {
       try {
         await smartContract.methods.unstake(tokenId, nftContract).send({
-          from: '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d',
+          from: account,
           to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
           gasLimit: 500000,
         });
@@ -280,7 +279,7 @@ export default function useStaking() {
     }, []);
 
     const result = await smartContract.methods.groupStake(stakeList).send({
-      from: '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d',
+      from: account,
       to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
       gasLimit: 500000 * stakeList.length,
     });
@@ -319,7 +318,7 @@ export default function useStaking() {
     }, []);
 
     await smartContract.methods.groupUnstake(unstakeList).send({
-      from: '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d',
+      from: account,
       to: '0x6EF90Cd81185aa41752288271F7f97F2BD0bb7f4',
       gasLimit: 500000 * unstakeList.length,
     });
