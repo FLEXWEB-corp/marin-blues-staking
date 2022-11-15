@@ -18,7 +18,6 @@ type StakingState = {
 
 const BASE_URL = 'https://eth-goerli.g.alchemy.com/nft/v2';
 const nftContract = '0x185780AD37a6018b660cAe29Ec83581a67ea28b7';
-const OWNER_ADDRESS = '0x5fD271a9bc50f1E210f15318C6B15d8bB79Cf67d';
 const API_KEY = '7FCTRHjK9c73oJcP5HXEcif9V8WahYyo';
 
 const contractQuery =
@@ -160,7 +159,7 @@ export default function useStaking() {
     if (!smartContract || !account) return;
 
     const { ownedNfts, totalCount } = await fetch(
-      `${BASE_URL}/${API_KEY}/getNFTs?owner=${OWNER_ADDRESS}&${contractQuery}
+      `${BASE_URL}/${API_KEY}/getNFTs?owner=${account}&${contractQuery}
     `,
       {
         method: 'GET',
