@@ -38,6 +38,9 @@ export const GroupContainer = styled.div`
     .item-box {
       display: flex;
       align-items: center;
+      &.active {
+        color: #5e4fff;
+      }
     }
     .item-box::after {
       width: 1px;
@@ -73,6 +76,11 @@ export const GroupContainer = styled.div`
       width: 100%;
       height: 100%;
       object-fit: cover;
+
+      &.plus {
+        width: 56px;
+        height: 56px;
+      }
     }
   }
 `;

@@ -39,6 +39,9 @@ export const SingleContainer = styled.div`
           line-height: 1.5;
           font-size: 16px;
           font-weight: 600;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
         }
         p:nth-child(2) {
           margin-top: 14px;
@@ -53,6 +56,9 @@ export const SingleContainer = styled.div`
           line-height: 1.5;
           font-size: 16px;
           font-weight: 500;
+        }
+
+        button {
         }
       }
     }

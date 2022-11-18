@@ -1,21 +1,17 @@
-import { createGlobalStyle } from "styled-components";
-import { normalize } from "styled-normalize";
+import { createGlobalStyle } from 'styled-components';
+import { normalize } from 'styled-normalize';
 
 export const GlobalStyle = createGlobalStyle` 
  ${normalize} 
+ @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
- @font-face {
-  font-family: "Poppins";
-  src: url("./fonts/Poppins-Medium.ttf");
-  font-weight:400;
- }
 *{
   box-sizing: border-box;
-
+  /* font-family: inherit; */
+  font-family: 'Poppins', sans-serif;
 }
-  html {    
-    box-sizing: border-box;   
-    font-family: Poppins;
+  body {
+    font-family: 'Poppins', sans-serif;
   }
 
   h1,
@@ -34,4 +30,5 @@ export const GlobalStyle = createGlobalStyle`
 
 
     a { cursor: pointer; text-decoration: none; }
+    
 `;

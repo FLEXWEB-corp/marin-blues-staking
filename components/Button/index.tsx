@@ -1,7 +1,7 @@
-import React from "react";
-import styled, { css } from "styled-components";
+import React from 'react';
+import styled, { css } from 'styled-components';
 
-type themeType = "black" | "white";
+type themeType = 'black' | 'white';
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -22,42 +22,49 @@ interface ButtonContainerProps {
   buttonTheme: string;
 }
 
-const ButtonContainer = styled.div<ButtonContainerProps>`
+const ButtonContainer = styled.button<ButtonContainerProps>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: ${(props) => props.width};
-  height: ${(props) => props.height};
-  padding: ${(props) => props.padding};
-  margin: ${(props) => props.margin};
+  width: ${props => props.width};
+  height: ${props => props.height};
+  padding: ${props => props.padding};
+  margin: ${props => props.margin};
   font-size: 16px;
   border-radius: 32px;
   line-height: 1.5;
   letter-spacing: 0.32px;
   cursor: pointer;
+  border: none;
+  background: none;
+  transition: 0.3s;
 
-  ${(props) =>
-    props.buttonTheme === "black" &&
+  ${props =>
+    props.buttonTheme === 'black' &&
     css`
       background-color: #141416;
       color: #fff;
     `};
 
-  ${(props) =>
-    props.buttonTheme === "white" &&
+  ${props =>
+    props.buttonTheme === 'white' &&
     css`
       border: solid 2px #e6e8ec;
       color: #141416;
+      &:hover {
+        background-color: #141416;
+        color: #fff;
+      }
     `};
 `;
 
 const Button = ({
   children,
-  width = "130px",
-  height = "48px",
-  padding = "0px",
-  margin = "0px",
-  buttonTheme = "black",
+  width = '130px',
+  height = '48px',
+  padding = '0px',
+  margin = '0px',
+  buttonTheme = 'black',
   onClick,
 }: ButtonProps) => {
   return (

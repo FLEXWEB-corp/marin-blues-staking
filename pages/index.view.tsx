@@ -55,25 +55,38 @@ const StackingPage: NextPage<{
       <img className="crystal-img" src="/images/crystal.png" alt="crystal" />
       <div className="top-title">
         <h1>
-          Staking <span>{tab}</span>
+          <span>
+            <strong>{tab}</strong>
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 40 40"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M24.655 16.321 20 20.976l-4.655-4.655a1.667 1.667 0 1 0-2.357 2.358l5.833 5.833c.651.65 1.707.65 2.358 0l5.833-5.833a1.667 1.667 0 1 0-2.357-2.358z"
+                fill="#141416"
+                fill-rule="evenodd"
+              />
+            </svg>
+
+            {tabClick && (
+              <TabModal>
+                <div className="tab-inner">
+                  {['NFTs', 'ORT'].map(item => (
+                    <p
+                      className={item === tab ? 'color' : ''}
+                      onClick={() => onClickTabChoice(item)}
+                    >
+                      {item}
+                    </p>
+                  ))}
+                </div>
+              </TabModal>
+            )}
+          </span>
+          <p>Parking Lot</p>
         </h1>
-        <div className="arrow-inner">
-          <img src="/images/arrow-down.png" onClick={onChangeTab} />
-          {tabClick && (
-            <TabModal>
-              <div className="tab-inner">
-                {['NFTs', 'ORT'].map(item => (
-                  <p
-                    className={item === tab ? 'color' : ''}
-                    onClick={() => onClickTabChoice(item)}
-                  >
-                    {item}
-                  </p>
-                ))}
-              </div>
-            </TabModal>
-          )}
-        </div>
       </div>
       <Info
         totalCount={state.totalCount}
@@ -186,7 +199,9 @@ const StackingPage: NextPage<{
 };
 
 const MainContainer = styled.div`
-  padding: 120px 160px 70px 160px;
+  max-width: 1440px;
+  padding: 0 160px;
+  margin: 0 auto;
 
   .crystal-img {
     position: absolute;
@@ -197,24 +212,21 @@ const MainContainer = styled.div`
   }
 
   .top-title {
-    display: flex;
-    align-items: center;
     h1 {
-      font-family: Poppins;
       font-size: 40px;
       font-weight: 600;
       color: #23262f;
+      margin-bottom: 64px;
 
       span {
-        margin: 0px 16px;
-        color: #5e4fff;
+        strong {
+          color: #5e4fff;
+        }
+        &:first-child {
+          display: flex;
+          align-items: center;
+        }
       }
-    }
-  }
-  .arrow-inner {
-    position: relative;
-    img {
-      cursor: pointer;
     }
   }
 `;

@@ -31,6 +31,7 @@ const Group = ({
               }}
             >
               <img
+                className={el ? '' : 'plus'}
                 src={
                   el
                     ? el.media[0]?.thumbnail ||
@@ -45,11 +46,16 @@ const Group = ({
         <div className="info-box">
           {type === 'staking' &&
             [
-              'BONUS : 10%',
-              '00d : 00h : 00m',
+              'Group Bnous : 10%',
+              '0d : 0h : 0m',
               groupNfts.every(el => el) ? '1 ORT' : '0 ORT',
             ].map((item, idx) => (
-              <div className="item-box" key={idx}>
+              <div
+                className={`item-box ${
+                  groupNfts.length > 0 && idx === 0 ? 'active' : ''
+                }`}
+                key={idx}
+              >
                 <div className="data-box">
                   <p className={idx === 2 ? 'color' : ''}>{item}</p>
                 </div>

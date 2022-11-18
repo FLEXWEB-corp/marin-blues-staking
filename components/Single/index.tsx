@@ -42,8 +42,8 @@ const Single = ({
                 />
                 <div className="info-inner">
                   <p>{item.title || item.contractMetadata.name}</p>
-                  {/* <p>30h : 00m : 00s</p> */}
                   <p>{getElapsedHMS(item.stakingAt)}</p>
+                  <p>{Number(item.reward).toFixed(2)} ORT</p>
                   <p>{item.ort}</p>
                   <Button
                     width="126px"
