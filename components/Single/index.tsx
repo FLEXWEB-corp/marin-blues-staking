@@ -7,8 +7,10 @@ const Single = ({
   data,
   onClick,
   onUnStaking,
+  show,
 }: {
   data: any[];
+  show: boolean;
   onClick: () => void;
   onUnStaking: (tokenId: number) => void;
 }) => {
@@ -26,8 +28,8 @@ const Single = ({
   };
 
   return (
-    <SingleContainer>
-      <h2>Single Staking</h2>
+    <SingleContainer show={show}>
+      <h2>Single Parking</h2>
       <div className="single-container">
         {data.length > 0 &&
           data.map((item, idx) => (
@@ -62,7 +64,25 @@ const Single = ({
             </Fragment>
           ))}
         <div className="plus_single_inner" onClick={onClick}>
-          <img src="/images/plus.png" />
+          <div className="img-container">
+            <img src="/images/plus.png" />
+          </div>
+          <div className="item-inner">
+            <div className="info-inner">
+              <p>Empty</p>
+              <p>30d : 00h : 00m</p>
+              <p>0 ORT</p>
+              <Button
+                width="126px"
+                height="36px"
+                margin="0 auto"
+                buttonTheme="white"
+                disabled
+              >
+                Start
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
       {stakingModal && (

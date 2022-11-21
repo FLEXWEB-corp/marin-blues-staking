@@ -3,18 +3,52 @@ import styled from 'styled-components';
 export const InfoContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  & > div {
+  flex-wrap: wrap;
+  gap: 16px 0;
+
+  @media (max-width: 480px) {
+    justify-content: center;
+  }
+
+  & .quest-box,
+  & .status-box,
+  & .event-box {
     width: 353px;
     height: 532px;
     border-radius: 24px;
   }
 
   .quest-box {
+    position: relative;
     background: url('/images/img-unlock-bg.webp');
     padding: 24px 8px 8px;
 
+    &.collapse {
+      height: auto;
+      .content {
+        display: none;
+      }
+
+      svg {
+        transform: rotate(180deg);
+      }
+    }
+
     .top {
       padding-left: 16px;
+
+      svg {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        display: none;
+        transition: 500ms;
+        cursor: pointer;
+
+        @media (max-width: 480px) {
+          display: block;
+        }
+      }
     }
 
     h2 {
@@ -75,7 +109,46 @@ export const InfoContainer = styled.div`
     background-color: #fff;
     color: #141416;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+    &.collapse {
+      padding: 24px 11px 28px 10px;
+      .title-head {
+        margin: 0;
+      }
+      .status-list {
+        display: none;
+      }
+
+      svg {
+        transform: rotate(180deg);
+      }
+    }
+
+    @media (max-width: 480px) {
+      height: auto;
+      order: 1;
+    }
+
+    .title-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      & > svg {
+        display: none;
+        margin-right: 13px;
+        cursor: pointer;
+        transition: 0.5s;
+      }
+      @media (max-width: 480px) {
+        margin-bottom: 24px;
+
+        svg {
+          display: block;
+        }
+      }
+    }
     h2 {
+      margin-left: 16px;
       font-weight: 600;
       font-size: 18px;
       line-height: 1.56;
@@ -95,7 +168,31 @@ export const InfoContainer = styled.div`
         height: 175px;
         padding: 16px;
         /* border: solid 2px #e6e8ec; */
+        border-top: 1px solid #e6e8ec;
+        border-left: 1px solid #e6e8ec;
         background-color: #fff;
+
+        &:nth-child(2n) {
+          border-right: 1px solid #e6e8ec;
+        }
+
+        &:nth-of-type(1) {
+          border-top-left-radius: 16px;
+        }
+        &:nth-of-type(2) {
+          border-top-right-radius: 16px;
+        }
+        &:nth-of-type(3) {
+          border-bottom-left-radius: 16px;
+        }
+        &:nth-of-type(4) {
+          border-bottom-right-radius: 16px;
+        }
+
+        &:nth-of-type(3),
+        &:nth-of-type(4) {
+          border-bottom: 1px solid #e6e8ec;
+        }
 
         .head {
           display: flex;
@@ -155,5 +252,23 @@ export const InfoContainer = styled.div`
       font-weight: 600;
       color: #fcfcfd;
     }
+  }
+
+  .modal-title {
+    font-size: 32px;
+    font-weight: 600;
+    color: #23262f;
+    line-height: 1.25;
+  }
+
+  .description {
+    margin: 32px 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #777e90;
+  }
+
+  .claim-btn {
+    margin-bottom: 8px;
   }
 `;

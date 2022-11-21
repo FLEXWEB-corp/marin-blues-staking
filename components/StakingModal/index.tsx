@@ -51,20 +51,20 @@ const StakingModal = ({ status, onClose, onUnStaking }: Props) => {
     <Modal onClose={onClose}>
       <StakingModalContainer>
         <div className="header-inner">
-          <h1>Claim Profits</h1>
+          <h1>Claim Rewards</h1>
           <div className="close-inner" onClick={onClose}>
             <img src="./images/close.png" />
           </div>
         </div>
         <p>
           {status === 'ing'
-            ? 'The staking of that NFT has not ended. You can only receive staking rewards so far.'
+            ? 'The Parking Period has not ended yet. You’ll get to receive the rewards you’ve earned so far.'
             : 'Staking has ended successfully! You can get rewards and restart or quit staking'}
         </p>
         <div className="btn-inner">
           <Button width="384px" height="48px" buttonTheme="black">
             {status === 'ing'
-              ? 'Get Currently Obtainable Rewards Only'
+              ? 'Claim Cumulated ORT'
               : 'Claim & Restart Staking'}
           </Button>
           <Button
@@ -76,7 +76,7 @@ const StakingModal = ({ status, onClose, onUnStaking }: Props) => {
               onClose();
             }}
           >
-            Get Rewards & Quit Staking
+            Claim & Pull Out
           </Button>
         </div>
       </StakingModalContainer>

@@ -1,20 +1,32 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const SingleContainer = styled.div`
+export const SingleContainer = styled.div<{ show: boolean }>`
   margin-top: 80px;
+  @media (max-width: 480px) {
+    margin: 0;
+    ${props =>
+      !props.show &&
+      css`
+        display: none;
+      `}
+  }
 
   h2 {
     font-size: 24px;
     font-weight: 600;
     line-height: 1.33;
     color: #23262f;
-    margin-bottom: 26px;
+    margin-bottom: 24px;
   }
 
   .single-container {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 28px;
+    grid-template-columns: repeat(6, minmax(160px, 1fr));
+    gap: 32px;
+
+    @media (max-width: 480px) {
+      grid-template-columns: repeat(2, minmax(160px, 1fr));
+    }
 
     .item-inner {
       img {
@@ -32,7 +44,7 @@ export const SingleContainer = styled.div`
         border: solid 2px #e6e8ec;
 
         p:nth-child(1) {
-          padding: 4px 17px;
+          padding: 4px 12px;
           border-radius: 12px;
           background-color: #e6e8ec;
           color: #141416;
@@ -51,11 +63,10 @@ export const SingleContainer = styled.div`
           font-weight: 500;
         }
         p:nth-child(3) {
-          margin-top: 4px;
+          margin: 4px 10px;
           color: #00c389;
           line-height: 1.5;
-          font-size: 16px;
-          font-weight: 500;
+          font-weight: 600;
         }
 
         button {
@@ -63,14 +74,16 @@ export const SingleContainer = styled.div`
       }
     }
     .plus_single_inner {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 160px;
-      height: 160px;
-      border: solid 2px #5e4fff;
-      background-color: #fcfcfd;
-      cursor: pointer;
+      .img-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 160px;
+        height: 160px;
+        border: solid 2px #5e4fff;
+        background-color: #fcfcfd;
+        cursor: pointer;
+      }
     }
   }
 `;

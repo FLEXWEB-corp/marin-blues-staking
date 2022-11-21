@@ -38,7 +38,7 @@ export const AddNftContainer = styled.div`
 
   .nft-list-inner {
     margin-top: 32px;
-    width: 384px;
+    width: 100%;
     height: 384px;
     padding: 16px 8px 24px;
     border-radius: 12px;

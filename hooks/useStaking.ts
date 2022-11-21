@@ -14,9 +14,11 @@ type StakingState = {
   loading: boolean;
   loadingText: string;
   error: boolean;
+  success: boolean;
 };
 
 const BASE_URL = 'https://eth-goerli.g.alchemy.com/nft/v2';
+// const BASE_URL = 'https://eth-mainnet.g.alchemy.com/nft/v2';
 const nftContract = '0x185780AD37a6018b660cAe29Ec83581a67ea28b7';
 const API_KEY = '7FCTRHjK9c73oJcP5HXEcif9V8WahYyo';
 
@@ -41,6 +43,25 @@ function reducer(state: StakingState, action: any): StakingState {
         loading: false,
         error: true,
         loadingText: action.payload,
+      };
+    case 'CLOSE_ERROR':
+      return {
+        ...state,
+        error: false,
+      };
+    case 'CLOSE_SUCCESS':
+      return {
+        ...state,
+        success: false,
+      };
+    case 'TOGGLE_NFT':
+      return {
+        ...state,
+        stakableNfts: state.stakableNfts.map(nft =>
+          nft.tokenId === action.payload
+            ? { ...nft, checked: !nft.checked }
+            : nft,
+        ),
       };
     case 'GROUP_SELECT':
       return {
@@ -77,6 +98,7 @@ function reducer(state: StakingState, action: any): StakingState {
       return {
         ...state,
         loading: false,
+        success: true,
         stakingNfts: state.stakingNfts.filter(
           nft => nft.tokenId !== action.payload,
         ),
@@ -121,6 +143,7 @@ function reducer(state: StakingState, action: any): StakingState {
 export default function useStaking() {
   const [web3, smartContract] = useWeb3();
   const { account } = useAccount();
+  // const account = '0x112f7E9307736149540954EFDCd4A0B60881496d';
 
   const [state, dispatch] = useReducer(reducer, {
     nfts: [],
@@ -132,6 +155,7 @@ export default function useStaking() {
     loading: false,
     loadingText: '',
     error: false,
+    success: false,
   });
 
   const addReward = useCallback(
@@ -170,6 +194,8 @@ export default function useStaking() {
       .getStakedTokenList(account)
       .call();
 
+    console.log(stakedList);
+
     const { stakingNfts, stakableNfts } = ownedNfts.reduce(
       (acc: any, cv: any) => {
         const tokenId = parseInt(cv.id.tokenId, 16);
@@ -183,9 +209,15 @@ export default function useStaking() {
             ...cv,
             tokenId,
             stakingAt: stakedItem.timestamp,
+            isGroup: stakedItem?.isGroup,
           });
         } else {
-          acc.stakableNfts.push({ ...cv, tokenId });
+          acc.stakableNfts.push({
+            ...cv,
+            tokenId,
+            checked: false,
+            isGroup: stakedItem?.isGroup,
+          });
         }
 
         return acc;
@@ -210,15 +242,23 @@ export default function useStaking() {
     });
   }, [smartContract, account]);
 
-  const setStakeNfts = (stakingNfts: any[], stakableNfts: any[]) => {
+  const closeError = useCallback(() => {
     dispatch({
-      type: 'SET_STAKE_NFTS',
-      payload: {
-        stakingNfts,
-        stakableNfts,
-      },
+      type: 'CLOSE_ERROR',
     });
-  };
+  }, []);
+  const closeSuccess = useCallback(() => {
+    dispatch({
+      type: 'CLOSE_SUCCESS',
+    });
+  }, []);
+
+  const onToggle = useCallback((id: number) => {
+    dispatch({
+      type: 'TOGGLE_NFT',
+      payload: id,
+    });
+  }, []);
 
   const onSelectGroup = (tokenId: number, groupId: number) => {
     dispatch({
@@ -272,7 +312,7 @@ export default function useStaking() {
 
         dispatch({
           type: 'ERROR',
-          payload: '에러가 발생했습니다.\n새로고침후 다시 시도해주세요.',
+          payload: 'Oops.. 💔',
         });
       }
     },
@@ -283,7 +323,7 @@ export default function useStaking() {
     async (tokenId: number) => {
       dispatch({
         type: 'LOADING',
-        payload: '언스테이킹이 진행중입니다.\n창을 닫지마세요.',
+        payload: 'Claiming ORT',
       });
 
       try {
@@ -302,7 +342,7 @@ export default function useStaking() {
 
         dispatch({
           type: 'ERROR',
-          payload: '에러가 발생했습니다.\n새로고침후 다시 시도해주세요.',
+          payload: 'Oops.. 💔',
         });
       }
     },
@@ -355,7 +395,7 @@ export default function useStaking() {
     } catch (error) {
       dispatch({
         type: 'ERROR',
-        payload: '에러가 발생했습니다.\n새로고침후 다시 시도해주세요.',
+        payload: 'Oops.. 💔',
       });
     }
   }, [smartContract, state.groupNfts, account]);
@@ -387,7 +427,7 @@ export default function useStaking() {
     } catch (error) {
       dispatch({
         type: 'ERROR',
-        payload: '에러가 발생했습니다.\n새로고침후 다시 시도해주세요.',
+        payload: 'Oops.. 💔',
       });
     }
   }, [smartContract, state.groupNfts, account]);
@@ -403,8 +443,10 @@ export default function useStaking() {
     onUnStaking,
     onGroupStaking,
     onGroupUnStaking,
+    onToggle,
     onSelectGroup,
     onSelectUnGroup,
-    setStakeNfts,
+    closeError,
+    closeSuccess,
   };
 }

@@ -6,6 +6,7 @@ const Group = ({
   title,
   type,
   groupNfts,
+  show,
   onClick,
   onGroupStaking,
   onGroupUnStaking,
@@ -13,46 +14,71 @@ const Group = ({
   title: string;
   type: 'staking' | 'unstaking';
   groupNfts: any[];
+  show: boolean;
   onClick: (id: number) => void;
   onGroupStaking: () => void;
   onGroupUnStaking: () => void;
 }) => {
   return (
-    <GroupContainer>
+    <GroupContainer show={show}>
       <h2>{title}</h2>
       <div className="group-inner">
         <div className="img-box">
-          {groupNfts.map((el: any, idx) => (
-            <div
-              className="plus_single_inner"
-              key={idx}
-              onClick={() => {
-                onClick(idx);
-              }}
-            >
-              <img
-                className={el ? '' : 'plus'}
-                src={
-                  el
-                    ? el.media[0]?.thumbnail ||
-                      el.media[0]?.gateway ||
-                      'https://testnets.opensea.io/static/images/placeholder.png'
-                    : '/images/plus.png'
-                }
-              />
+          <div className="grid">
+            <div className="hidden-box">
+              <p>Group Bonus :</p>
+              <p>10%</p>
             </div>
-          ))}
+            {groupNfts.map((el: any, idx) => (
+              <div
+                className="plus_single_inner"
+                key={idx}
+                onClick={() => {
+                  onClick(idx);
+                }}
+              >
+                <img
+                  className={el ? '' : 'plus'}
+                  src={
+                    el
+                      ? el.media[0]?.thumbnail ||
+                        el.media[0]?.gateway ||
+                        'https://testnets.opensea.io/static/images/placeholder.png'
+                      : '/images/plus.png'
+                  }
+                />
+              </div>
+            ))}
+          </div>
+          <div className="mobile-content">
+            <div className="field">
+              <p className="label">Earned:</p>
+              <p className="price">0 ORT</p>
+            </div>
+            <div className="field">
+              <p className="label">Time Parked:</p>
+              <p>0h : 0m : 0s</p>
+            </div>
+            <Button
+              width="100%"
+              height="48px"
+              buttonTheme="black"
+              onClick={onGroupStaking}
+            >
+              start
+            </Button>
+          </div>
         </div>
         <div className="info-box">
           {type === 'staking' &&
             [
-              'Group Bnous : 10%',
+              'Group Bonus : 10%',
               '0d : 0h : 0m',
               groupNfts.every(el => el) ? '1 ORT' : '0 ORT',
             ].map((item, idx) => (
               <div
                 className={`item-box ${
-                  groupNfts.length > 0 && idx === 0 ? 'active' : ''
+                  groupNfts.some(el => el) && idx === 0 ? 'active' : ''
                 }`}
                 key={idx}
               >
