@@ -74,6 +74,13 @@ function reducer(state: StakingState, action: any): StakingState {
             : nft,
         ),
       };
+    case 'UN_SELECT':
+      return {
+        ...state,
+        groupNfts: state.groupNfts.map(el =>
+          el?.tokenId === action.payload ? null : el,
+        ),
+      };
     case 'GROUP_UN_SELECT':
       return {
         ...state,
@@ -273,6 +280,13 @@ export default function useStaking() {
     });
   };
 
+  const unSelect = (tokenId: number) => {
+    dispatch({
+      type: 'UN_SELECT',
+      payload: tokenId,
+    });
+  };
+
   const onStaking = useCallback(
     async (id: number) => {
       try {
@@ -448,5 +462,6 @@ export default function useStaking() {
     onSelectUnGroup,
     closeError,
     closeSuccess,
+    unSelect,
   };
 }

@@ -10,6 +10,7 @@ const Group = ({
   onClick,
   onGroupStaking,
   onGroupUnStaking,
+  unSelect,
 }: {
   title: string;
   type: 'staking' | 'unstaking';
@@ -18,6 +19,7 @@ const Group = ({
   onClick: (id: number) => void;
   onGroupStaking: () => void;
   onGroupUnStaking: () => void;
+  unSelect: (tokenId: number) => void;
 }) => {
   return (
     <GroupContainer show={show}>
@@ -33,9 +35,13 @@ const Group = ({
               <div
                 className={`plus_single_inner ${el ? 'exist' : ''}`}
                 key={idx}
-                onClick={() => {
-                  onClick(idx);
-                }}
+                {...(el
+                  ? {}
+                  : {
+                      onClick() {
+                        onClick(idx);
+                      },
+                    })}
               >
                 <img
                   className={el ? '' : 'plus'}
@@ -48,7 +54,16 @@ const Group = ({
                   }
                 />
                 {el && (
-                  <img src="/images/close.webp" alt="close" className="close" />
+                  <img
+                    src="/images/close.webp"
+                    alt="close"
+                    className="close"
+                    onClick={e => {
+                      e.stopPropagation();
+                      console.log('close');
+                      unSelect(el.tokenId);
+                    }}
+                  />
                 )}
               </div>
             ))}
@@ -95,6 +110,7 @@ const Group = ({
               width="125px"
               height="36px"
               buttonTheme="black"
+              disabled={!groupNfts.every(el => el)}
               onClick={onGroupUnStaking}
             >
               Claim
@@ -104,6 +120,7 @@ const Group = ({
               width="125px"
               height="36px"
               buttonTheme="black"
+              disabled={!groupNfts.every(el => el)}
               onClick={onGroupStaking}
             >
               Start

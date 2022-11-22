@@ -32,6 +32,7 @@ const StackingPage: NextPage<{
     onGroupUnStaking,
     closeError,
     closeSuccess,
+    unSelect,
   } = useStaking();
 
   const onSelect = useCallback(
@@ -45,6 +46,13 @@ const StackingPage: NextPage<{
       activeGroupId !== null && onSelectUnGroup(tokenId, activeGroupId);
     },
     [activeGroupId],
+  );
+
+  const parkingUnSelect = useCallback(
+    (tokenId: number) => {
+      unSelect(tokenId);
+    },
+    [unSelect],
   );
 
   console.log('state:', state);
@@ -121,6 +129,7 @@ const StackingPage: NextPage<{
         }}
         onGroupStaking={onGroupStaking}
         onGroupUnStaking={onGroupUnStaking}
+        unSelect={parkingUnSelect}
         show={tabMenu === 'group'}
       />
       <Group
@@ -134,6 +143,7 @@ const StackingPage: NextPage<{
         }}
         onGroupStaking={onGroupStaking}
         onGroupUnStaking={onGroupUnStaking}
+        unSelect={parkingUnSelect}
       />
       {addModal && (
         <AddNft
