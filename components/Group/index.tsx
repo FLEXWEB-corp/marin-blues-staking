@@ -31,13 +31,12 @@ const Group = ({
             </div>
             {groupNfts.map((el: any, idx) => (
               <div
-                className="plus_single_inner"
+                className={`plus_single_inner ${el ? 'exist' : ''}`}
                 key={idx}
                 onClick={() => {
                   onClick(idx);
                 }}
               >
-                <div></div>
                 <img
                   className={el ? '' : 'plus'}
                   src={
@@ -48,7 +47,9 @@ const Group = ({
                       : '/images/plus.png'
                   }
                 />
-                <img src="/images/close.webp" alt="close" className="close" />
+                {el && (
+                  <img src="/images/close.webp" alt="close" className="close" />
+                )}
               </div>
             ))}
           </div>

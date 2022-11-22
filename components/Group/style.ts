@@ -166,8 +166,12 @@ export const GroupContainer = styled.div<{ show: boolean }>`
     background-color: #fcfcfd;
     cursor: pointer;
 
-    &:hover img:not(.close) {
+    &.exist:hover img:not(.close) {
       filter: blur(3px);
+    }
+
+    &.exist:hover .close {
+      display: block;
     }
 
     @media (max-width: 480px) {
@@ -193,6 +197,7 @@ export const GroupContainer = styled.div<{ show: boolean }>`
       width: 40px;
       height: 40px;
       transform: translate(-50%, -50%);
+      display: none;
     }
   }
 `;
