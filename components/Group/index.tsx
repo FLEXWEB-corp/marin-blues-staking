@@ -37,6 +37,7 @@ const Group = ({
                   onClick(idx);
                 }}
               >
+                <div></div>
                 <img
                   className={el ? '' : 'plus'}
                   src={
@@ -47,6 +48,7 @@ const Group = ({
                       : '/images/plus.png'
                   }
                 />
+                <img src="/images/close.webp" alt="close" className="close" />
               </div>
             ))}
           </div>
@@ -65,7 +67,7 @@ const Group = ({
               buttonTheme="black"
               onClick={onGroupStaking}
             >
-              start
+              Start
             </Button>
           </div>
         </div>
@@ -94,7 +96,7 @@ const Group = ({
               buttonTheme="black"
               onClick={onGroupUnStaking}
             >
-              claim
+              Claim
             </Button>
           ) : (
             <Button
@@ -103,7 +105,7 @@ const Group = ({
               buttonTheme="black"
               onClick={onGroupStaking}
             >
-              start
+              Start
             </Button>
           )}
         </div>

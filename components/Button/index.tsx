@@ -47,6 +47,10 @@ const ButtonContainer = styled.button<ButtonContainerProps>`
     css`
       background-color: #141416;
       color: #fff;
+      &:hover {
+        background-color: #5e4fff;
+        color: #fff;
+      }
     `};
 
   ${props =>

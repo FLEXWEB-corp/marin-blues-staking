@@ -156,6 +156,7 @@ export const GroupContainer = styled.div<{ show: boolean }>`
   }
 
   .plus_single_inner {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -164,6 +165,11 @@ export const GroupContainer = styled.div<{ show: boolean }>`
     border: solid 2px #5e4fff;
     background-color: #fcfcfd;
     cursor: pointer;
+
+    &:hover img:not(.close) {
+      filter: blur(3px);
+    }
+
     @media (max-width: 480px) {
       width: 106px;
       height: 106px;
@@ -178,6 +184,15 @@ export const GroupContainer = styled.div<{ show: boolean }>`
         width: 56px;
         height: 56px;
       }
+    }
+
+    .close {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 40px;
+      height: 40px;
+      transform: translate(-50%, -50%);
     }
   }
 `;

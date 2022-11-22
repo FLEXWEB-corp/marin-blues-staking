@@ -142,15 +142,7 @@ const AddNft = ({ nfts, onClose, onStaking, onToggle }: AddNftProps) => {
           {nfts &&
             nfts.length > 0 &&
             nfts.map(item => (
-              <div
-                className="item-inner"
-                key={item.tokenId}
-                // onClick={() => {
-                //   onStaking(item.tokenId, item.contract.address);
-
-                //   onClose();
-                // }}
-              >
+              <div className="item-inner" key={item.tokenId}>
                 {item.checked ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -184,7 +176,13 @@ const AddNft = ({ nfts, onClose, onStaking, onToggle }: AddNftProps) => {
                     />
                   </svg>
                 )}
-                <div className="content">
+                <div
+                  className="content"
+                  onClick={() => {
+                    onStaking(item.tokenId, item.contract.address);
+                    onClose();
+                  }}
+                >
                   <img
                     src={
                       item.media[0]?.thumbnail ||

@@ -278,7 +278,7 @@ export default function useStaking() {
       try {
         dispatch({
           type: 'LOADING',
-          payload: '스테이킹이 진행중입니다.\n창을 닫지마세요.',
+          payload: 'Single Parking',
         });
 
         await smartContract.methods.stake(id, nftContract).send({
