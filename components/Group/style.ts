@@ -25,6 +25,12 @@ export const GroupContainer = styled.div<{ show: boolean }>`
     margin-bottom: 24px;
   }
 
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px 0;
+  }
+
   .group-inner {
     .hidden-box {
       display: none;

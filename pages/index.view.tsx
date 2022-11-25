@@ -120,9 +120,8 @@ const StackingPage: NextPage<{
         show={tabMenu === 'single'}
       />
       <Group
-        title={'Group Parking'}
-        type="staking"
         groupNfts={state.groupNfts}
+        groupStakingNfts={state.groupStakingNfts}
         onClick={(id: number) => {
           setGroupModal(true);
           setActiveGroupId(id);
@@ -132,7 +131,7 @@ const StackingPage: NextPage<{
         unSelect={parkingUnSelect}
         show={tabMenu === 'group'}
       />
-      <Group
+      {/* <Group
         title={'Group UnStaking'}
         type="unstaking"
         show={tabMenu === 'group'}
@@ -144,7 +143,7 @@ const StackingPage: NextPage<{
         onGroupStaking={onGroupStaking}
         onGroupUnStaking={onGroupUnStaking}
         unSelect={parkingUnSelect}
-      />
+      /> */}
       {addModal && (
         <AddNft
           nfts={state.stakableNfts}

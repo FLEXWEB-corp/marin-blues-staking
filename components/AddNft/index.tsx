@@ -179,7 +179,7 @@ const AddNft = ({ nfts, onClose, onStaking, onToggle }: AddNftProps) => {
                 <div
                   className="content"
                   onClick={() => {
-                    onStaking(item.tokenId, item.contract.address);
+                    // onStaking(item.tokenId, item.contract.address);
                     onClose();
                   }}
                 >
