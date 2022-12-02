@@ -9,7 +9,6 @@ type StakingState = {
   totalCount: number;
   groupNfts: any[];
   groupStakingNfts: any[];
-  groupUnStakingNfts: any[];
   stakingNfts: any[];
   stakableNfts: any[];
   loading: boolean;
@@ -65,6 +64,14 @@ function reducer(state: StakingState, action: any): StakingState {
             : nft,
         ),
       };
+    case 'UN_CHECK_ALL':
+      return {
+        ...state,
+        stakableNfts: state.stakableNfts.map(nft => ({
+          ...nft,
+          checked: false,
+        })),
+      };
     case 'GROUP_SELECT':
       return {
         ...state,
@@ -81,17 +88,6 @@ function reducer(state: StakingState, action: any): StakingState {
         ...state,
         groupNfts: state.groupNfts.map(el =>
           el?.tokenId === action.payload ? null : el,
-        ),
-      };
-    case 'GROUP_UN_SELECT':
-      return {
-        ...state,
-        groupUnStakingNfts: state.groupUnStakingNfts.map((nft, idx) =>
-          idx === action.payload.groupId
-            ? state.stakingNfts.find(
-                el => el.tokenId === action.payload.tokenId,
-              )
-            : nft,
         ),
       };
     case 'STAKE':
@@ -136,17 +132,14 @@ function reducer(state: StakingState, action: any): StakingState {
         loading: false,
         stakingNfts: state.stakingNfts.filter(
           nft =>
-            !state.groupUnStakingNfts.some(
-              gNft => nft.tokenId === gNft?.tokenId,
-            ),
+            !state.groupStakingNfts.some(gNft => nft.tokenId === gNft?.tokenId),
         ),
         groupStakingNfts: state.groupStakingNfts.filter(
           (_, idx) => idx !== action.payload,
         ),
         stakableNfts: state.stakableNfts.concat(
-          state.groupUnStakingNfts.filter(el => el),
+          state.groupStakingNfts.filter(el => el),
         ),
-        groupUnStakingNfts: Array(5).fill(null),
       };
 
     default:
@@ -159,7 +152,6 @@ const initialState = {
   totalCount: 0,
   groupNfts: Array(5).fill(null),
   groupStakingNfts: [],
-  groupUnStakingNfts: Array(5).fill(null),
   stakingNfts: [],
   stakableNfts: [],
   loading: false,
@@ -274,7 +266,9 @@ export default function useStaking() {
         ownedNfts,
         stakingNfts: stakingNftsResult,
         stakableNfts,
-        groupStakingNfts: [groupStakingNftsResult],
+        groupStakingNfts: groupStakingNftsResult.length
+          ? [groupStakingNftsResult]
+          : [],
       },
     });
   }, [smartContract, account]);
@@ -297,18 +291,24 @@ export default function useStaking() {
     });
   }, []);
 
+  const unCheckAll = useCallback(() => {
+    dispatch({
+      type: 'UN_CHECK_ALL',
+    });
+  }, []);
+
   const onSelectGroup = (tokenId: number, groupId: number) => {
     dispatch({
       type: 'GROUP_SELECT',
       payload: { tokenId, groupId },
     });
   };
-  const onSelectUnGroup = (tokenId: number, groupId: number) => {
-    dispatch({
-      type: 'GROUP_UN_SELECT',
-      payload: { tokenId, groupId },
-    });
-  };
+  // const onSelectUnGroup = (tokenId: number, groupId: number) => {
+  //   dispatch({
+  //     type: 'GROUP_UN_SELECT',
+  //     payload: { tokenId, groupId },
+  //   });
+  // };
 
   const unSelect = (tokenId: number) => {
     dispatch({
@@ -448,17 +448,21 @@ export default function useStaking() {
     async (idx: number) => {
       dispatch({
         type: 'LOADING',
-        payload: '그룹 언스테이킹이 진행중입니다.\n창을 닫지마세요.',
+        payload: '그룹언스테이킹중입니다.\n창을 닫지마세요.',
       });
 
       try {
-        const unstakeList = state.groupUnStakingNfts.reduce((acc, cv) => {
-          if (cv) {
-            acc.push([account, cv.tokenId, nftContract, 0, false]);
-          }
+        if (!state.groupStakingNfts[idx]) return;
+        const unstakeList = state.groupStakingNfts[idx].reduce(
+          (acc: any, cv: any) => {
+            if (cv) {
+              acc.push([account, cv.tokenId, nftContract, 0, false]);
+            }
 
-          return acc;
-        }, []);
+            return acc;
+          },
+          [],
+        );
 
         await smartContract.methods.groupUnstake(unstakeList).send({
           from: account,
@@ -471,13 +475,15 @@ export default function useStaking() {
           payload: idx,
         });
       } catch (error) {
+        console.log('error:', error);
+
         dispatch({
           type: 'ERROR',
           payload: 'Oops.. 💔',
         });
       }
     },
-    [smartContract, state.groupNfts, account],
+    [smartContract, state, account, dispatch],
   );
 
   useEffect(() => {
@@ -493,9 +499,9 @@ export default function useStaking() {
     onGroupUnStaking,
     onToggle,
     onSelectGroup,
-    onSelectUnGroup,
     closeError,
     closeSuccess,
     unSelect,
+    unCheckAll,
   };
 }

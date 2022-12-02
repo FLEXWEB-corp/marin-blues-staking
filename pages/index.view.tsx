@@ -27,12 +27,12 @@ const StackingPage: NextPage<{
     onUnStaking,
     onToggle,
     onSelectGroup,
-    onSelectUnGroup,
     onGroupStaking,
     onGroupUnStaking,
     closeError,
     closeSuccess,
     unSelect,
+    unCheckAll,
   } = useStaking();
 
   const onSelect = useCallback(
@@ -41,12 +41,12 @@ const StackingPage: NextPage<{
     },
     [activeGroupId],
   );
-  const onSelectUn = useCallback(
-    (tokenId: number) => {
-      activeGroupId !== null && onSelectUnGroup(tokenId, activeGroupId);
-    },
-    [activeGroupId],
-  );
+  // const onSelectUn = useCallback(
+  //   (tokenId: number) => {
+  //     activeGroupId !== null && onSelectUnGroup(tokenId, activeGroupId);
+  //   },
+  //   [activeGroupId],
+  // );
 
   const parkingUnSelect = useCallback(
     (tokenId: number) => {
@@ -150,6 +150,7 @@ const StackingPage: NextPage<{
           onClose={() => setAddModal(false)}
           onStaking={onStaking}
           onToggle={onToggle}
+          unCheckAll={unCheckAll}
         />
       )}
       {groupModal && (
@@ -163,7 +164,7 @@ const StackingPage: NextPage<{
           onSelect={onSelect}
         />
       )}
-      {groupUnModal && (
+      {/* {groupUnModal && (
         <SelectNft
           nfts={state.stakingNfts.filter(nft =>
             state.groupUnStakingNfts.every(
@@ -173,7 +174,7 @@ const StackingPage: NextPage<{
           onClose={() => setGroupUnModal(false)}
           onSelect={onSelectUn}
         />
-      )}
+      )} */}
       {state.loading && (
         <Modal onClose={() => {}} height="auto" width="448px">
           <ModalContainer>
@@ -340,6 +341,7 @@ const ModalContainer = styled.div`
     font-weight: 600;
     line-height: 1.25;
     color: #23262f;
+    white-space: pre-wrap;
   }
 
   &.error .title {

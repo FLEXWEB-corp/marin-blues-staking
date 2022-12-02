@@ -4,9 +4,14 @@ import Button from '../Button';
 interface GroupItemProps {
   nfts: any[];
   onGroupUnStaking: (idx: number) => void;
+  idx: number;
 }
 
-export default function GroupItem({ nfts, onGroupUnStaking }: GroupItemProps) {
+export default function GroupItem({
+  nfts,
+  onGroupUnStaking,
+  idx,
+}: GroupItemProps) {
   return (
     <div className="group-inner">
       <div className="img-box">
@@ -15,7 +20,7 @@ export default function GroupItem({ nfts, onGroupUnStaking }: GroupItemProps) {
             <p>Group Bonus :</p>
             <p>10%</p>
           </div>
-          {nfts.map((el, idx) => (
+          {nfts.map(el => (
             <div className="plus_single_inner">
               <img
                 src={
@@ -72,7 +77,7 @@ export default function GroupItem({ nfts, onGroupUnStaking }: GroupItemProps) {
           width="125px"
           height="36px"
           buttonTheme="black"
-          // onClick={() => onGroupUnStaking(idx)}
+          onClick={() => onGroupUnStaking(idx)}
         >
           Claim
         </Button>

@@ -8,6 +8,7 @@ interface AddNftProps {
   onClose: () => void;
   onStaking: (id: number, contractAddress: string) => void;
   onToggle: (id: number) => void;
+  unCheckAll: () => void;
 }
 
 export const AddNftContainer = styled.div`
@@ -124,7 +125,13 @@ export const AddNftContainer = styled.div`
   }
 `;
 
-const AddNft = ({ nfts, onClose, onStaking, onToggle }: AddNftProps) => {
+const AddNft = ({
+  nfts,
+  onClose,
+  onStaking,
+  onToggle,
+  unCheckAll,
+}: AddNftProps) => {
   return (
     <Modal height="auto" onClose={onClose}>
       <AddNftContainer>
@@ -199,7 +206,12 @@ const AddNft = ({ nfts, onClose, onStaking, onToggle }: AddNftProps) => {
             ))}
         </div>
         <div className="btn-container">
-          <Button width="120px" height="40px" buttonTheme="white">
+          <Button
+            width="120px"
+            height="40px"
+            buttonTheme="white"
+            onClick={unCheckAll}
+          >
             Clear
           </Button>
 

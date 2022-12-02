@@ -29,6 +29,7 @@ const Group = ({
             nfts={nfts}
             onGroupUnStaking={onGroupUnStaking}
             key={idx}
+            idx={idx}
           />
         ))}
         <div className="group-inner">
